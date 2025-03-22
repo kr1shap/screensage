@@ -45,10 +45,11 @@ const Quiz = ({questions}) => {
         <span className="total-q">/{questions.length}</span>
     </div>
     <h2 className="quest">{question}</h2>
+
     <div className="answer-input">
-            <input
+          <textarea
               type="text"
-              placeholder="Type your answer here"
+              placeholder="let's think about it...."
               value={userAnswers[currentQ] || ""}
               onChange={handleAnswerChange}
             />
