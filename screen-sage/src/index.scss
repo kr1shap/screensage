@@ -1,0 +1,44 @@
+$background: #074a07;
+$text_main: #001f06;
+$font_size: 30px; 
+
+body { 
+    margin: 0 auto; 
+    display:flex; 
+    justify-content: center;
+    align-items: center;
+    height:100vh; 
+    background-color: $background;
+    font-size: $font_size;
+}
+
+.quiz-cont { 
+    align-items: center;
+    justify-content: center;
+    height:70vh;
+    width:50vh;
+    padding: 30px 30px; 
+
+    /*styling*/
+    background: #ffffff; 
+    border-radius: 4px;
+    transition: 0.5s;
+
+    .active-q-no { 
+        font-size:40px; 
+        color:$text_main;
+    }
+    .total-q-no { 
+        font-size:20px; 
+        color:$text_main;
+    }
+
+    .quest { 
+        font-size:20px; 
+        color:#074a07
+    }
+}
+
+.quiz-cont:hover { 
+    box-shadow: 0px 0px 10px #ffffff60;
+}
