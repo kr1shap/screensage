@@ -34,6 +34,12 @@ git clone https://github.com/YOUR_GITHUB_USERNAME/screen-sage.git
 cd screen-sage/server
 ```
 
+### Also reccomended to set up a virtual enviornment 
+
+```python -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+```
+
 ### **2 Install Dependencies**
 
 ```bash
