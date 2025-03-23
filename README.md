@@ -11,7 +11,7 @@
 
 ## 🍃 Overview
 
-<img width="245" alt="image" src="https://github.com/user-attachments/assets/08518807-7e4a-48cd-bab4-bca8b394f053" />
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/141a4f97-8fd7-4db0-91cd-9d8a94321a7f" />
 
 Screen Sage is a software designed to help both interviewers and interviewees with pre-screening interviews. 
 The software takes a position/role a person is applying to, and generates questions to be during a pre-screening interview for the stated position. 
