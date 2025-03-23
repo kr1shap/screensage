@@ -3,13 +3,13 @@ import cohere
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
+# load env file 
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates')
-app.secret_key = os.getenv('SECRET_KEY')  # Required for session management
+app.secret_key = os.getenv('SECRET_KEY')  
 
-# Initialize Cohere client with the API key from environment
+# form cohere client with API KEY
 cohere_api_key = os.getenv('COHERE_API_KEY')
 if not cohere_api_key:
     raise ValueError("COHERE_API_KEY not found in environment variables. Please check your .env file or system environment.")
@@ -21,9 +21,9 @@ co = cohere.Client(cohere_api_key)
 def home():
     if request.method == 'POST':
         job_role = request.form.get('job_role')
-        session['job_role'] = job_role  # Store job role in session
+        session['job_role'] = job_role  # store job 
 
-        # Generate AI questions for the quiz
+        #generate questions w/prompt and token use 
         prompt = f"Generate 5 interview questions for a {job_role} role. Return them as a numbered list, one question per line:"
         response = co.generate(
             model='command',
@@ -31,38 +31,38 @@ def home():
             max_tokens=200
         )
 
-        # Split into individual questions and remove intro line
+        #ind questions
         questions = response.generations[0].text.strip().split('\n')
         questions = [q.strip() for q in questions if q.strip() and not q.strip().startswith("Here are")]  # Filter out intro line
         questions = [q[2:] if len(q) > 2 else q for q in questions]
 
-        #questions and reset sess data
         session['questions'] = questions
-        session['current_question'] = 0  # Start with the first question
-        session['answers'] = {}  # Initialize answers dictionary
+        session['current_question'] = 0  
+        session['answers'] = {}  
 
         return redirect(url_for('quiz'))
 
     return render_template('home.html')
 
-# Quiz Page Route
+# quiz route 
 @app.route('/quiz', methods=['GET', 'POST'])
 def quiz():
     if 'questions' not in session:
         return redirect(url_for('home'))
 
+    #post req 
     if request.method == 'POST':
-        # Save the answer for the current question
+        # save ans 
         current_question_index = session['current_question']
         session['answers'][f'question{current_question_index + 1}'] = request.form.get('answer')
 
-        # Move to the next question or submit if all questions are answered
+        # move to next 
         if 'next' in request.form:
             session['current_question'] += 1
         elif 'previous' in request.form:
             session['current_question'] -= 1
         elif 'submit' in request.form:
-            # Send all answers to Cohere API for scoring and feedback
+            # send to cohere API 
             prompt = (
                 f"Job Role: {session['job_role']}\n"
                 f"Answers: {session['answers']}\n"
@@ -77,31 +77,27 @@ def quiz():
                 max_tokens=300
             )
 
-            # Parse the response to extract score and feedback
+            # go through reply 
             result_text = response.generations[0].text
             score = "N/A"
-            feedback = result_text  # Default to the entire response if parsing fails
+            feedback = result_text  # if fail then nothing 
 
-            # Look for a score in the response (e.g., "Score: 85/100")
+            # get score if poss 
             if "Score:" in result_text and "Feedback:" in result_text:
-                try:
-                    # Extract the score (e.g., "85")
+                try:               
                     score_part = result_text.split("Score:")[1].strip()
                     score = score_part.split("/")[0].strip()
 
-                    # Extract the feedback
                     feedback = result_text.split("Feedback:")[1].strip()
                 except IndexError:
-                    # If splitting fails, fall back to the entire response
                     feedback = result_text
 
-            # Store score and feedback in session
+            # store the score
             session['score'] = score
             session['feedback'] = feedback
 
             return redirect(url_for('results'))
 
-    # Ensure current_question is within bounds
     session['current_question'] = max(0, min(session['current_question'], len(session['questions']) - 1))
 
     return render_template('quiz.html',
@@ -109,7 +105,7 @@ def quiz():
                            question=session['questions'][session['current_question']],
                            question_number=session['current_question'] + 1,
                            total_questions=len(session['questions']))
-# Results Page Route
+# page route for results 
 @app.route('/results')
 def results():
     score = session.get('score', 'N/A')
